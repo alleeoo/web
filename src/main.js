@@ -122,50 +122,60 @@ function renderPerson(person) {
   // <div>
   // `;
 }
-
-function makeFlowChart(person) {
-  return renderPerson(person);
+function connectingLine() {
+  return horizontalLine();
 }
+function connectingSvg() {
+  let svg = document.createElement("img");
+  svg.setAttribute("src", "/public/spouseLine/line.svg");
+  svg.setAttribute("id", "svg");
+  svg.classList.add("svg");
+  return svg;
+}
+function crossingLine() {
+  let container = document.createElement("div");
+  container.classList.add("crossLine");
 
-function renderData(person, lvl = 0) {
-  //Tree element that will contain all the people
+  container.insertAdjacentElement("beforeend", horizontalLine());
+  container.insertAdjacentElement("beforeend", verticalLine());
+
+  return container;
+}
+function horizontalLine() {
+  let lineDiv = document.createElement("div");
+  lineDiv.classList.add("connectingLine");
+  let line = document.createElement("hr");
+  line.setAttribute("id", "horizontalLine");
+  lineDiv.insertAdjacentElement("beforeend", line);
+  return lineDiv;
+}
+function verticalLine() {
+  let lineDiv = document.createElement("div");
+  lineDiv.classList.add("childrenLine");
+  let line = document.createElement("hr");
+  line.setAttribute("id", "vertricalLine");
+  lineDiv.appendChild(line);
+  return lineDiv;
+}
+function renderTree(person) {
   let tree = document.createElement("div");
   tree.classList.add("tree");
 
-  //creating a div for parent
-  let parentDiv = document.createElement("div");
-  parentDiv.classList.add("parentDiv");
-  console.log(parentDiv);
+  let container = document.createElement("div");
+  container.classList.add("container");
 
-  //Adding Parent to tree
-  tree.appendChild(parentDiv);
+  container.appendChild(renderPerson(person));
 
-  let parent = document.createElement("div");
-  parent.classList.add("parent");
+  tree.appendChild(container);
 
-  parentDiv.appendChild(parent);
-
-  parent.appendChild(renderPerson(person));
-
-  //Rendering spouse
-
-  if (person?.spouse?.length > 0) {
-    parent.insertAdjacentElement("beforeend", renderPerson(person.spouse[0]));
+  if (person?.spouse.length > 0) {
+    container.insertAdjacentElement("beforeend", crossingLine());
+    container.insertAdjacentElement(
+      "beforeend",
+      renderPerson(person.spouse[0])
+    );
   }
 
-  let childDiv = document.createElement("div");
-  childDiv.classList.add("childDiv");
-
-  parentDiv.appendChild(childDiv);
-
-  if (person?.children?.length > 0) {
-    person.children.forEach((child) => {
-      childDiv.insertAdjacentElement("beforeend", renderData(child));
-    });
-  }
   return tree;
 }
-
-app.appendChild(makeFlowChart(person));
-
-app.appendChild(renderData(person));
+app.appendChild(renderTree(person));
