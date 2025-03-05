@@ -1,181 +1,148 @@
-import "./style.css";
+document.addEventListener("DOMContentLoaded", function () {
+  const app = document.getElementById("app");
 
-let app = document.getElementById("app");
+  const initialTopGap = 50;
 
-let person = {
-  name: "John",
-  age: 32,
-  gender: "male",
-  img: "/public/icons/male.png",
-  spouse: [
-    {
-      name: "Jane",
-      age: 30,
-      gender: "female",
-      img: "/public/icons/female.png",
-    },
-  ],
-  children: [
-    {
-      name: "Emma",
-      age: 5,
-      gender: "female",
-      img: "/public/icons/female.png",
-      spouse: [
-        {
-          name: "Oliver",
-          age: 27,
-          gender: "male",
-          img: "/public/icons/male.png",
-        },
-      ],
-      children: [
-        {
-          name: "Sophia",
-          age: 1,
-          gender: "female",
-          img: "/public/icons/female.png",
-        },
-      ],
-    },
-    {
-      name: "Lucas",
-      age: 3,
-      gender: "male",
-      img: "/public/icons/male.png",
-      spouse: [
-        {
-          name: "Emily",
-          age: 28,
-          gender: "female",
-          img: "/public/icons/female.png",
-        },
-      ],
-      children: [
-        {
-          name: "Oliver",
-          age: 1,
-          gender: "male",
-          img: "/public/icons/male.png",
-        },
-        {
-          name: "Mia",
-          age: 2,
-          gender: "female",
-          img: "/public/icons/female.png",
-        },
-      ],
-    },
-  ],
-};
+  const screenWidth = window.innerWidth;
+  const screenHeigth = window.innerHeight;
 
-function renderPerson(person) {
-  //Creating a parent card element
-  let card = document.createElement("div");
-  card.classList.add("card");
-  card.style.backgroundColor = person.gender === "male" ? "#22406c" : "pink";
-  //Profile Picture
-  let imgDiv = document.createElement("div");
-  imgDiv.id = "imgDiv";
-  let img = document.createElement("img");
-  img.src = person.img;
-  img.alt = "Profile Picture";
-  img.style.width = "100%";
-  imgDiv.appendChild(img);
-  card.appendChild(imgDiv);
-  //Info Parent element
-  let info = document.createElement("div");
-  info.classList.add("info");
-  //Name Tag
-  let name = document.createElement("div");
-  name.innerText = `Name: ${person.name}`;
-  info.appendChild(name);
-  //Age
-  let age = document.createElement("div");
-  age.innerText = `Age: ${person.age}`;
-  info.appendChild(age);
-  //Gender
-  let gender = document.createElement("div");
-  gender.innerText = `Gender: ${person.gender}`;
-  info.appendChild(gender);
+  //center from X axis
+  const centerOfX = screenWidth / 2;
 
-  card.appendChild(info);
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("width", "100vw");
+  svg.setAttribute("height", "100vh");
+  svg.style.border = "1px solid black";
+  svg.style.backgroundColor = "#f5f5f5";
+  app.appendChild(svg);
 
-  console.log(card);
+  let person = {
+    name: "John",
+    age: 32,
+    gender: "male",
+    spouse: [{ name: "Jane", age: 30, gender: "female" }],
+    children: [
+      {
+        name: "Emma",
+        age: 5,
+        gender: "female",
+        spouse: [{ name: "Oliver", age: 27, gender: "male" }],
+        children: [{ name: "Sophia", age: 1, gender: "female" }],
+      },
+      {
+        name: "Lucas",
+        age: 3,
+        gender: "male",
+        spouse: [{ name: "Emily", age: 28, gender: "female" }],
+        children: [
+          { name: "Oliver", age: 1, gender: "male" },
+          { name: "Mia", age: 2, gender: "female" },
+        ],
+      },
+    ],
+  };
 
-  return card;
+  function createPersonNode(person, x, y) {
+    //Height andd width of code
+    const width = 120;
+    const height = 50;
 
-  // <div class="card" style = "${
-  //   person.gender === "male"
-  //     ? "background-color:#22406c"
-  //     : "background-color:pink"
-  // }">
-  // <div id= "imgDiv"> <img src="${
-  //   person.img
-  // }" alt="John" style="width:100%"></div>
-  //   <div class="info"><div>
-  //   <div>Name:   ${person.name}</div>
-  //   </div>
-  //   <div>Age: ${person.age} years old</div>
-  //   <div>Gender: ${person.gender}</div>
-  //   </div>
-  // <div>
-  // `;
-}
-function connectingLine() {
-  return horizontalLine();
-}
-function connectingSvg() {
-  let svg = document.createElement("img");
-  svg.setAttribute("src", "/public/spouseLine/line.svg");
-  svg.setAttribute("id", "svg");
-  svg.classList.add("svg");
-  return svg;
-}
-function crossingLine() {
-  let container = document.createElement("div");
-  container.classList.add("crossLine");
+    let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 
-  container.insertAdjacentElement("beforeend", horizontalLine());
-  container.insertAdjacentElement("beforeend", verticalLine());
+    //Size of each Node
+    rect.setAttribute("width", width.toString());
+    rect.setAttribute("height", height.toString());
+    //Position of each Node
+    rect.setAttribute("x", x - 60);
+    rect.setAttribute("y", y);
 
-  return container;
-}
-function horizontalLine() {
-  let lineDiv = document.createElement("div");
-  lineDiv.classList.add("connectingLine");
-  let line = document.createElement("hr");
-  line.setAttribute("id", "horizontalLine");
-  lineDiv.insertAdjacentElement("beforeend", line);
-  return lineDiv;
-}
-function verticalLine() {
-  let lineDiv = document.createElement("div");
-  lineDiv.classList.add("childrenLine");
-  let line = document.createElement("hr");
-  line.setAttribute("id", "vertricalLine");
-  lineDiv.appendChild(line);
-  return lineDiv;
-}
-function renderTree(person) {
-  let tree = document.createElement("div");
-  tree.classList.add("tree");
+    //Styling
+    rect.setAttribute("rx", "10");
+    rect.setAttribute("fill", person.gender === "male" ? "#22406c" : "pink");
+    rect.setAttribute("stroke", "#000");
+    group.appendChild(rect);
 
-  let container = document.createElement("div");
-  container.classList.add("container");
+    let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute("x", x - 50);
+    text.setAttribute("y", y + 30);
+    text.setAttribute("fill", "white");
+    text.setAttribute("font-size", "14");
+    text.textContent = person.name;
+    group.appendChild(text);
 
-  container.appendChild(renderPerson(person));
+    svg.appendChild(group);
 
-  tree.appendChild(container);
-
-  if (person?.spouse.length > 0) {
-    container.insertAdjacentElement("beforeend", crossingLine());
-    container.insertAdjacentElement(
-      "beforeend",
-      renderPerson(person.spouse[0])
-    );
+    return { x: x, y: y + 25 };
   }
 
-  return tree;
-}
-app.appendChild(renderTree(person));
+  function createLine(x1, y1, x2, y2) {
+    let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", x1);
+    line.setAttribute("y1", y1);
+    line.setAttribute("x2", x2);
+    line.setAttribute("y2", y2);
+    line.setAttribute("stroke", "black");
+    line.setAttribute("stroke-width", "2");
+    svg.appendChild(line);
+  }
+
+  function getTreeWidth(person) {
+    if (!person.children || person.children.length === 0) {
+      return 1;
+    }
+    return person.children.reduce((sum, child) => sum + getTreeWidth(child), 3);
+  }
+
+  function renderTree(person, x, y, level = 0) {
+    if (person?.spouse) {
+      x = x - 80;
+    }
+
+    //Height of one node is 50px and 30px for padding so 1 level = 80
+    let yOffset = 80 * level;
+    let position = createPersonNode(person, x, y + yOffset);
+
+    if (person?.spouse?.length > 0) {
+      let spousePosition = createPersonNode(
+        person.spouse[0],
+        x + 200,
+        y + yOffset
+      );
+      createLine(
+        position.x + 60,
+        position.y,
+        spousePosition.x - 60,
+        spousePosition.y
+      );
+    }
+
+    if (person.children && person.children.length > 0) {
+      let totalWidth = getTreeWidth(person) * 100;
+      let startX = x - totalWidth / 2 + 50;
+      let childY = y + 100 + yOffset;
+
+      person.children.forEach((child) => {
+        //120 is the width of rect and 30 for extra space
+        let childWidth = getTreeWidth(child) * 150;
+        let childPosition = renderTree(
+          child,
+          startX + childWidth / 2,
+          childY,
+          level + 1
+        );
+        createLine(
+          position.x,
+          position.y + 25,
+          childPosition.x,
+          childPosition.y - 25
+        );
+        startX += childWidth;
+      });
+    }
+
+    return position;
+  }
+
+  renderTree(person, centerOfX, initialTopGap);
+});
