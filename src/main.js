@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
     svg.appendChild(line);
   }
 
-  function computeSubtreeWidth(person) {
+  function getTreeWidth(person) {
     if (!person.children || person.children.length === 0) {
       return nodeWidth;
     }
@@ -74,9 +74,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let numChildren = person.children.length;
 
     for (let i = 0; i < numChildren; i++) {
-      let childWidth = computeSubtreeWidth(person.children[i]);
+      let childWidth = getTreeWidth(person.children[i]);
       totalWidth += childWidth;
-      if (i < numChildren - 1) {
+      if (i < numChildren) {
         totalWidth += Math.max(
           baseHorizontalGap,
           minHorizontalGap * numChildren
@@ -88,6 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function renderTree(person, x, y) {
+    // createLine(screenWidth / 2, 0, screenWidth / 2, 50); indicates center
     let position = createPersonNode(person, x, y);
 
     let parentCenter = x;
@@ -107,9 +108,10 @@ document.addEventListener("DOMContentLoaded", function () {
       let totalChildrenWidth = 0;
       let childrenWidths = [];
       for (let i = 0; i < person.children.length; i++) {
-        let cw = computeSubtreeWidth(person.children[i]);
-        childrenWidths.push(cw);
-        totalChildrenWidth += cw;
+        let childWidth = getTreeWidth(person.children[i]);
+        console.log("children Width", childrenWidths);
+        childrenWidths.push(childWidth);
+        totalChildrenWidth += childWidth;
       }
       totalChildrenWidth +=
         Math.max(baseHorizontalGap, minHorizontalGap * person.children.length) *
@@ -123,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
         startX +
         totalChildrenWidth -
         childrenWidths[childrenWidths.length - 1] / 2;
-      let middleLineY = y + nodeHeight;
+      let middleLineY = y + nodeHeight + 50;
 
       createLine(parentCenter, position.y, parentCenter, middleLineY);
 
