@@ -75,8 +75,8 @@ document.addEventListener("DOMContentLoaded", function () {
     line.setAttribute("y1", y1.toString());
     line.setAttribute("x2", x2.toString());
     line.setAttribute("y2", y2.toString());
-    line.setAttribute("stroke", "aliceblue");
-    line.setAttribute("stroke-width", "2");
+    line.setAttribute("stroke", "cyan");
+    line.setAttribute("stroke-width", "3");
     svg.appendChild(line);
   }
 
