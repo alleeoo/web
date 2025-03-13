@@ -1,4 +1,5 @@
 import person from "./data.js";
+import { person4 } from "./data.js";
 document.addEventListener("DOMContentLoaded", function () {
   const app = document.getElementById("app");
 
@@ -19,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const minHorizontalGap = 30;
   const verticalGap = 100;
 
-  function createPersonNode(person, x, y) {
+  function createNode(person, x, y) {
     let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
     let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -32,9 +33,34 @@ document.addEventListener("DOMContentLoaded", function () {
     rect.setAttribute("stroke", "#000");
     group.appendChild(rect);
 
+    // let circle = document.createElementNS(
+    //   "http://www.w3.org/2000/svg",
+    //   "circle"
+    // );
+    // circle.setAttribute("cx", x.toString());
+    // circle.setAttribute("cy", y.toString());
+    // circle.setAttribute("r", "50");
+    // circle.setAttribute("fill", "red");
+
+    let img = document.createElementNS("http://www.w3.org/2000/svg", "image");
+    img.setAttribute(
+      "href",
+      person.gender === "male"
+        ? "/public/icons/male.png"
+        : "/public/icons/female.png"
+    );
+    img.setAttribute("alt", "/public.icons/female.png");
+    img.setAttribute("x", x - 60);
+    img.setAttribute("y", y);
+    img.setAttribute("height", "50");
+    img.setAttribute("width", "50");
+    group.appendChild(img);
+
+    // group.appendChild(circle);
+
     let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    text.setAttribute("x", x.toString());
-    text.setAttribute("y", (y + 25).toString());
+    text.setAttribute("x", (x + 20).toString());
+    text.setAttribute("y", (y + 20).toString());
     text.setAttribute("fill", "white");
     text.setAttribute("font-size", "14");
     text.setAttribute("text-anchor", "middle");
@@ -42,8 +68,8 @@ document.addEventListener("DOMContentLoaded", function () {
     group.appendChild(text);
 
     let age = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    age.setAttribute("x", x.toString());
-    age.setAttribute("y", (y + 45).toString());
+    age.setAttribute("x", (x + 20).toString());
+    age.setAttribute("y", (y + 40).toString());
     age.setAttribute("fill", "white");
     age.setAttribute("font-size", "12");
     age.setAttribute("text-anchor", "middle");
@@ -89,12 +115,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function renderTree(person, x, y) {
     // createLine(screenWidth / 2, 0, screenWidth / 2, 50); indicates center
-    let position = createPersonNode(person, x, y);
-
+    if (person?.spouse) {
+      x = x - 120;
+    }
+    let position = createNode(person, x, y);
     let parentCenter = x;
     if (person?.spouse && person.spouse.length > 0) {
-      let spouseX = x + nodeWidth + baseHorizontalGap;
-      let spousePos = createPersonNode(person.spouse[0], spouseX, y);
+      //x is the position of first node and add some
+      let spouseX = x + baseHorizontalGap + nodeWidth;
+      let spousePos = createNode(person.spouse[0], spouseX, y);
       createLine(
         position.x + nodeWidth / 2,
         position.y,
@@ -149,6 +178,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     return position;
   }
-
-  renderTree(person, centerOfX, initialTopGap);
+  // createNode(person, screenWidth / 2, 50);
+  renderTree(person4, centerOfX, initialTopGap);
 });
