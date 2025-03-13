@@ -1,5 +1,6 @@
 import person from "./data.js";
 import { person4 } from "./data.js";
+
 document.addEventListener("DOMContentLoaded", function () {
   const app = document.getElementById("app");
 
@@ -33,15 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
     rect.setAttribute("stroke", "#000");
     group.appendChild(rect);
 
-    // let circle = document.createElementNS(
-    //   "http://www.w3.org/2000/svg",
-    //   "circle"
-    // );
-    // circle.setAttribute("cx", x.toString());
-    // circle.setAttribute("cy", y.toString());
-    // circle.setAttribute("r", "50");
-    // circle.setAttribute("fill", "red");
-
     let img = document.createElementNS("http://www.w3.org/2000/svg", "image");
     img.setAttribute(
       "href",
@@ -49,14 +41,11 @@ document.addEventListener("DOMContentLoaded", function () {
         ? "/public/icons/male.png"
         : "/public/icons/female.png"
     );
-    img.setAttribute("alt", "/public.icons/female.png");
     img.setAttribute("x", x - 60);
     img.setAttribute("y", y);
     img.setAttribute("height", "50");
     img.setAttribute("width", "50");
     group.appendChild(img);
-
-    // group.appendChild(circle);
 
     let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
     text.setAttribute("x", (x + 20).toString());
@@ -96,32 +85,23 @@ document.addEventListener("DOMContentLoaded", function () {
       return nodeWidth;
     }
 
-    let totalWidth = 0;
-    let numChildren = person.children.length;
+    let childrenWidths = person.children.map(getTreeWidth);
+    let totalWidth = childrenWidths.reduce((sum, width) => sum + width, 0);
 
-    for (let i = 0; i < numChildren; i++) {
-      let childWidth = getTreeWidth(person.children[i]);
-      totalWidth += childWidth;
-      if (i < numChildren) {
-        totalWidth += Math.max(
-          baseHorizontalGap,
-          minHorizontalGap * numChildren
-        );
-      }
-    }
+    let spacing = Math.max(
+      baseHorizontalGap,
+      minHorizontalGap * person.children.length
+    );
+    totalWidth += spacing * (person.children.length - 1);
 
     return Math.max(totalWidth, nodeWidth);
   }
 
   function renderTree(person, x, y) {
-    // createLine(screenWidth / 2, 0, screenWidth / 2, 50); indicates center
-    if (person?.spouse) {
-      x = x - 120;
-    }
     let position = createNode(person, x, y);
     let parentCenter = x;
+
     if (person?.spouse && person.spouse.length > 0) {
-      //x is the position of first node and add some
       let spouseX = x + baseHorizontalGap + nodeWidth;
       let spousePos = createNode(person.spouse[0], spouseX, y);
       createLine(
@@ -134,14 +114,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (person.children && person.children.length > 0) {
-      let totalChildrenWidth = 0;
-      let childrenWidths = [];
-      for (let i = 0; i < person.children.length; i++) {
-        let childWidth = getTreeWidth(person.children[i]);
-        console.log("children Width", childrenWidths);
-        childrenWidths.push(childWidth);
-        totalChildrenWidth += childWidth;
-      }
+      let childrenWidths = person.children.map(getTreeWidth);
+      let totalChildrenWidth = childrenWidths.reduce(
+        (sum, width) => sum + width,
+        0
+      );
       totalChildrenWidth +=
         Math.max(baseHorizontalGap, minHorizontalGap * person.children.length) *
         (person.children.length - 1);
@@ -154,10 +131,9 @@ document.addEventListener("DOMContentLoaded", function () {
         startX +
         totalChildrenWidth -
         childrenWidths[childrenWidths.length - 1] / 2;
-      let middleLineY = y + nodeHeight + 50;
+      let middleLineY = y + nodeHeight + verticalGap / 2;
 
       createLine(parentCenter, position.y, parentCenter, middleLineY);
-
       createLine(firstChildX, middleLineY, lastChildX, middleLineY);
 
       let currentX = startX;
@@ -166,7 +142,6 @@ document.addEventListener("DOMContentLoaded", function () {
         let childCenterX = currentX + childSubtreeWidth / 2;
 
         createLine(childCenterX, middleLineY, childCenterX, childY);
-
         renderTree(person.children[i], childCenterX, childY);
         currentX +=
           childSubtreeWidth +
@@ -178,6 +153,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     return position;
   }
-  // createNode(person, screenWidth / 2, 50);
-  renderTree(person4, centerOfX, initialTopGap);
+
+  renderTree(person4, centerOfX - 120, initialTopGap);
 });
