@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const nodeWidth = 120;
   const nodeHeight = 50;
   const baseHorizontalGap = 50;
-  const minHorizontalGap = 30;
   const verticalGap = 100;
 
   function createNode(person, x, y) {
@@ -88,10 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let childrenWidths = person.children.map(getTreeWidth);
     let totalWidth = childrenWidths.reduce((sum, width) => sum + width, 0);
 
-    let spacing = Math.max(
-      baseHorizontalGap,
-      minHorizontalGap * person.children.length
-    );
+    let spacing = baseHorizontalGap * person.children.length;
     totalWidth += spacing * (person.children.length - 1);
 
     return Math.max(totalWidth, nodeWidth);
@@ -120,7 +116,8 @@ document.addEventListener("DOMContentLoaded", function () {
         0
       );
       totalChildrenWidth +=
-        Math.max(baseHorizontalGap, minHorizontalGap * person.children.length) *
+        baseHorizontalGap *
+        person.children.length *
         (person.children.length - 1);
 
       let startX = parentCenter - totalChildrenWidth / 2;
@@ -147,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
           childSubtreeWidth +
           Math.max(
             baseHorizontalGap,
-            minHorizontalGap * person.children.length
+            baseHorizontalGap * person.children.length
           );
       }
     }
