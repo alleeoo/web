@@ -89,5 +89,5 @@ export const person4 = {
     })),
   })),
 };
-
+// console.log(person4);
 export default person;
