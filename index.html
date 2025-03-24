@@ -12,13 +12,8 @@
       <div id="tree-container"></div>
     </div>
     <script type="module" src="/src/main.js"></script>
-    <script
-      src="https://github.com/bumbu/svg-pan-zoom/blob/master/src/svg-pan-zoom.js"
-    >
-      var panZoomTiger = svgPanZoom('#demo-tiger');
-      document.getElementById("tree-container").addEventListener('load', function(){
-        svgPanZoom(document.getElementById("tree-container"))
-      })
+    <script src="https://unpkg.com/panzoom@8.7.3/dist/panzoom.min.js">
+      var element = document.querySelector('#svg')
     </script>
   </body>
 </html>
