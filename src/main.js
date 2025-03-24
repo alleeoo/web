@@ -222,6 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   // createCircleNode(person, 0, 0);
   renderTree(person4, svgWidth / 2 - 50, initialTopGap);
+
   setTimeout(() => {
     scrollContainer.scrollLeft = (svgWidth - screenWidth) / 2;
   }, 100);
