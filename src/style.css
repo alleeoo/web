@@ -15,9 +15,14 @@ body {
 #app {
   /* background-color: #242424; */
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 #svg {
-  background-color: #162531;
+  background-color: #242424;
+  /* background-color: #162531; */
   overflow: hidden;
 }
 #tree-container {

@@ -1,46 +1,35 @@
+import Panzoom from "@panzoom/panzoom";
 import person from "./data.js";
-import { person4 } from "./data.js";
-let dummy = {
-  name: 1,
-  children: [],
-};
+
+const height = "1000";
+const width = "1000";
+
+const nodeWidth = 50;
+const nodeHeight = 50;
+const baseHorizontalGap = 15;
+const verticalGap = 50;
+
+const initialTopGap = 50;
+const screenWidth = window.innerWidth;
+
+const scrollContainer = document.createElement("div");
+
 document.addEventListener("DOMContentLoaded", function () {
   const app = document.getElementById("app");
 
-  const nodeWidth = 50;
-  const nodeHeight = 50;
-  const baseHorizontalGap = 15;
-  const verticalGap = 50;
-
-  // console.log(getPeople(dummy));
-  // console.log(getTreeWidth(dummy));
-
-  const initialTopGap = 50;
-  const screenWidth = window.innerWidth;
-  const screenHeight = window.innerHeight;
-  const centerOfX = screenWidth / 2;
-
-  // const container = document.createElement("div");
-  // container.style.width = "100vw";
-  // container.style.height = "100vh";
-  // container.style.backgroundColor = "#242424";
-
-  // app.appendChild(container);
-
-  const scrollContainer = document.createElement("div");
-  scrollContainer.style.width = "100vw";
-  scrollContainer.style.height = "100vh";
   scrollContainer.style.overflow = "auto";
   scrollContainer.style.backgroundColor = "#242424";
   scrollContainer.style.display = "flex";
+  scrollContainer.style.minHeight = height.concat("px");
+  scrollContainer.style.minWidth = width.concat("px");
   scrollContainer.style.justifyContent = "center";
   scrollContainer.style.position = "relative";
   scrollContainer.style.alignItems = "flex-start";
 
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  const svgWidth = Math.max(getTreeWidth(person4) * 1.025, screenWidth * 1.5);
-  // console.log("SVG Width: ", svgWidth);
-  const svgHeight = Math.max(screenHeight, 800);
+
+  const svgWidth = width;
+  const svgHeight = height;
 
   svg.setAttribute("width", svgWidth.toString());
   svg.setAttribute("height", svgHeight.toString());
@@ -49,58 +38,14 @@ document.addEventListener("DOMContentLoaded", function () {
   svg.style.position = "absolute";
   svg.style.left = "0px";
 
-  svg.scroll(svgWidth / 2, 0);
+  svg.scroll(svgWidth / 2, 0); // Review this later
+
   scrollContainer.appendChild(svg);
   scrollContainer.scrollLeft = svgWidth / 2;
+
+  console.log(scrollContainer);
+
   app.appendChild(scrollContainer);
-
-  // function createNode(person, x, y) {
-  //   let group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-
-  //   let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-  //   rect.setAttribute("width", nodeWidth.toString());
-  //   rect.setAttribute("height", nodeHeight.toString());
-  //   rect.setAttribute("x", (x - nodeWidth / 2).toString());
-  //   rect.setAttribute("y", y.toString());
-  //   rect.setAttribute("rx", "10");
-  //   rect.setAttribute("fill", person.gender === "male" ? "#22406c" : "pink");
-  //   rect.setAttribute("stroke", "#000");
-  //   group.appendChild(rect);
-
-  //   let img = document.createElementNS("http://www.w3.org/2000/svg", "image");
-  //   img.setAttribute(
-  //     "href",
-  //     person.gender === "male"
-  //       ? "/public/icons/male.png"
-  //       : "/public/icons/female.png"
-  //   );
-  //   img.setAttribute("x", x - 60);
-  //   img.setAttribute("y", y);
-  //   img.setAttribute("height", "50");
-  //   img.setAttribute("width", "50");
-  //   group.appendChild(img);
-
-  //   let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  //   text.setAttribute("x", (x + 20).toString());
-  //   text.setAttribute("y", (y + 20).toString());
-  //   text.setAttribute("fill", "white");
-  //   text.setAttribute("font-size", "14");
-  //   text.setAttribute("text-anchor", "middle");
-  //   text.textContent = person.name;
-  //   group.appendChild(text);
-
-  //   let age = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  //   age.setAttribute("x", (x + 20).toString());
-  //   age.setAttribute("y", (y + 40).toString());
-  //   age.setAttribute("fill", "white");
-  //   age.setAttribute("font-size", "12");
-  //   age.setAttribute("text-anchor", "middle");
-  //   age.textContent = `Age: ${person.age}`;
-  //   group.appendChild(age);
-
-  //   svg.appendChild(group);
-  //   return { x: x, y: y + nodeHeight / 2 };
-  // }
 
   function createCircleNode(person, x, y) {
     const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -136,7 +81,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     return { x: x, y: y + nodeHeight / 2 };
   }
-
   function createLine(x1, y1, x2, y2) {
     let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     line.setAttribute("x1", x1.toString());
@@ -147,7 +91,6 @@ document.addEventListener("DOMContentLoaded", function () {
     line.setAttribute("stroke-width", "2");
     svg.appendChild(line);
   }
-
   function getTreeWidth(person) {
     if (!person.children || person.children.length === 0) {
       return nodeWidth;
@@ -159,15 +102,6 @@ document.addEventListener("DOMContentLoaded", function () {
     totalWidth += spacing * (person.children.length - 1);
 
     return totalWidth;
-  }
-  function getPeople(person) {
-    if (!person.children || person.children.length === 0) {
-      return 1;
-    }
-    return person.children.reduce((sum, child) => {
-      // console.log(child);
-      return sum + getNumberOfChildren(child);
-    }, 1);
   }
   function renderTree(person, x, y) {
     // createLine(x, 0, x, 50);
@@ -220,8 +154,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     return position;
   }
-  // createCircleNode(person, 0, 0);
-  renderTree(person4, svgWidth / 2 - 50, initialTopGap);
+  renderTree(person, svgWidth / 2 - 50, initialTopGap);
+  const panzoom = Panzoom(svg, {
+    maxScale: 5,
+  });
+  panzoom.pan(10, 10);
+  panzoom.zoom(1);
+  svg.parentElement.addEventListener("wheel", panzoom.zoomWithWheel);
   setTimeout(() => {
     scrollContainer.scrollLeft = (svgWidth - screenWidth) / 2;
   }, 100);
